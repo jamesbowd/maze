@@ -1,6 +1,9 @@
 //Setup for matter.js
 
-const { Engine, Render, Runner, World, Bodies } = Matter;
+const { Engine, Render, Runner, World, Bodies, MouseConstraint, Mouse } = Matter;
+
+const width = 800;
+const height = 600;
 
 const engine = Engine.create();
 const { world } = engine;
@@ -8,13 +11,20 @@ const render = Render.create({
   element: document.body,
   engine: engine,
   options: {
-    width: 800,
-    height: 600,
+    width: width,
+    height: height,
   },
 });
 
 Render.run(render);
 Runner.run(Runner.create(), engine);
+
+World.add(
+  world,
+  MouseConstraint.create(engine, {
+    mouse: Mouse.create(render.canvas),
+  })
+);
 
 // Walls
 
@@ -25,6 +35,14 @@ const walls = [
   Bodies.rectangle(800, 300, 40, 600, { isStatic: true }),
 ];
 
-// Add to world
-
 World.add(world, walls);
+
+// Random shapes
+
+for (let i = 0; i < 20; i++) {
+  if (Math.random() > 0.5) {
+    World.add(world, Bodies.rectangle(Math.random() * width, Math.random() * height, 50, 50));
+  } else {
+    World.add(world, Bodies.circle(Math.random() * width, Math.random() * height, 35));
+  }
+}
